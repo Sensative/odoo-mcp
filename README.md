@@ -7,15 +7,34 @@ Default target: **https://sensative.implefy.cloud** (Odoo 19.0 Enterprise).
 
 Every call runs as the user who owns the API key, with that user's access rights and record rules.
 
-## Setup
+## Create your API key
+
+The server signs in to Odoo with a personal API key. The key belongs to your user: calls run with your
+access rights and show up under your name in Odoo's logs.
+
+1. Sign in at https://sensative.implefy.cloud/odoo as usual.
+2. Click your avatar in the top right corner and choose **My Preferences**.
+3. Open the **Security** tab and click **Add API Key** under *API Keys*.
+4. Confirm with your password when Odoo asks. If you do not remember it, use *Reset Password* on the
+   sign-in page first.
+5. Describe the key (for example `Claude MCP`), choose how long it should be valid and click **Generate key**.
+6. Copy the key straight away. Odoo shows it once and cannot show it again.
+
+Good to know:
+
+- **Lifetime.** Ordinary users get at most 90 days by default; Settings administrators can also choose
+  *Persistent Key*. Once a key has expired the tools answer `Odoo 401 Unauthorized: Invalid apikey`;
+  create a new key the same way.
+- **Handling.** The key gives full access to your account. Keep it like a password, in a password manager
+  or a secret store, and never put it in a chat, a ticket or a commit.
+- **Withdrawing.** The same *API Keys* list has a trash button on every key. A deleted key stops working
+  at once.
+
+## Install and connect
 
 You need Node.js 22.18 or later. It runs the TypeScript sources directly, so there is no build step.
 
-1. Create an API key in Odoo: your avatar (top right) → *My Preferences* → *Security* → *Add API Key*.
-   Odoo asks for your password, then for a description and a duration, and shows the key once.
-   Ordinary users get at most 90 days by default, so expect to renew it; Settings administrators
-   can also create keys that do not expire.
-2. Get the code and its dependencies:
+1. Get the code and its dependencies:
 
    ```bash
    git clone https://github.com/Sensative/odoo-mcp.git
@@ -25,14 +44,17 @@ You need Node.js 22.18 or later. It runs the TypeScript sources directly, so the
    cd odoo-mcp && npm ci
    ```
 
-3. Check the key against the live instance. This starts the server the way an MCP host does
-   and asks Odoo who you are:
+2. Check your key against the live instance. This starts the server the way an MCP host does and asks
+   Odoo who you are:
 
    ```bash
    ODOO_API_KEY=your-key npm run smoke
    ```
 
-4. Register the server with your MCP host.
+   A working key ends the run with `OK: the API key works.` and shows your user under `server_info`.
+   Without a working key the same output says what Odoo objected to.
+
+3. Register the server with your MCP host, as below.
 
 ### Claude Code
 
@@ -41,8 +63,7 @@ claude mcp add --env ODOO_API_KEY=your-key --env ODOO_READONLY=1 --scope user --
   -- node /path/to/odoo-mcp/src/main.ts
 ```
 
-Or in a project's `.mcp.json`, with the key taken from the environment (in Claude Code on the web:
-from the environment's secrets):
+Or in a project's `.mcp.json`, which reads the key from the environment instead of holding it:
 
 ```json
 {
@@ -59,19 +80,35 @@ from the environment's secrets):
 }
 ```
 
+### Claude Code on the web
+
+Add `ODOO_API_KEY` as an environment variable in the cloud environment's settings (the environment menu
+in the session's title bar, then *Edit*) and start a new session; the `.mcp.json` above picks it up.
+The session also needs this repository checked out with `npm ci` run, for example from the environment's
+setup script, and `args` pointing at that checkout.
+
+Everyone who uses that environment can read the variable, so give it a key for a user with no more access
+than the work needs.
+
 ### VS Code, Cursor and other hosts
 
 Any host that launches stdio servers takes the same command: `node /path/to/odoo-mcp/src/main.ts`,
 with the settings below as environment variables.
 
-### Why an API key and not an OAuth login?
+## Why an API key and not an OAuth login?
 
 Odoo's JSON-2 API accepts API keys only. Odoo can let people *sign in* through an OAuth provider, but it
-does not issue OAuth tokens for its API. The key is personal all the same: it belongs to your user, acts
-with your access rights and shows up under your name in Odoo's logs.
+does not issue OAuth tokens for its API, and this instance signs people in with e-mail and password.
 
 MCP's own OAuth flow applies to servers reached over HTTP. A server that a host starts as a local process,
 like this one, takes its credentials from the environment.
+
+A "click Connect and sign in" experience can be built, but it is a different deployment:
+
+- the server runs as a service on an address of its own, over HTTP;
+- an identity provider, for example Microsoft Entra, signs people in and issues the tokens;
+- the server still needs an Odoo API key for every person behind the scenes. One shared service key
+  would work too, but then everybody acts as the same Odoo user.
 
 ## Settings
 
