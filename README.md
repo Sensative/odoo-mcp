@@ -11,8 +11,10 @@ Every call runs as the user who owns the API key, with that user's access rights
 
 You need Node.js 22.18 or later. It runs the TypeScript sources directly, so there is no build step.
 
-1. Create an API key in Odoo: avatar → *My Profile* → *Account Security* → *New API Key*.
-   Keys expire, so expect to renew it.
+1. Create an API key in Odoo: your avatar (top right) → *My Preferences* → *Security* → *Add API Key*.
+   Odoo asks for your password, then for a description and a duration, and shows the key once.
+   Ordinary users get at most 90 days by default, so expect to renew it; Settings administrators
+   can also create keys that do not expire.
 2. Get the code and its dependencies:
 
    ```bash
@@ -61,6 +63,15 @@ from the environment's secrets):
 
 Any host that launches stdio servers takes the same command: `node /path/to/odoo-mcp/src/main.ts`,
 with the settings below as environment variables.
+
+### Why an API key and not an OAuth login?
+
+Odoo's JSON-2 API accepts API keys only. Odoo can let people *sign in* through an OAuth provider, but it
+does not issue OAuth tokens for its API. The key is personal all the same: it belongs to your user, acts
+with your access rights and shows up under your name in Odoo's logs.
+
+MCP's own OAuth flow applies to servers reached over HTTP. A server that a host starts as a local process,
+like this one, takes its credentials from the environment.
 
 ## Settings
 

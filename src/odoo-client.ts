@@ -28,10 +28,10 @@ export interface OdooClientOptions {
 }
 
 const MISSING_KEY =
-  'ODOO_API_KEY is not set. Create a key in Odoo (your avatar → My Profile → Account Security → New API Key) ' +
+  'ODOO_API_KEY is not set. Create a key in Odoo (your avatar → My Preferences → Security → Add API Key) ' +
   'and hand it to this server in the ODOO_API_KEY environment variable.';
 const KEY_HINT =
-  'Check ODOO_API_KEY: keys are created in Odoo under My Profile → Account Security → New API Key, and they expire.';
+  'Check ODOO_API_KEY: keys are created in Odoo under My Preferences → Security → Add API Key, and they expire.';
 const NAMED_ARGUMENTS_HINT =
   'The JSON-2 API only takes named arguments; list_methods shows the parameter names of a method.';
 const ARGUMENT_BINDING_ERROR = 'werkzeug.exceptions.UnprocessableEntity';

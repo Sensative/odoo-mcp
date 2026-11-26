@@ -124,7 +124,7 @@ describe('OdooClient', () => {
     assert.equal(fake.requests.length, before);
     assert.equal(error.status, undefined);
     assert.match(error.message, /ODOO_API_KEY/);
-    assert.match(error.message, /Account Security/);
+    assert.match(error.message, /My Preferences → Security → Add API Key/);
   });
 
   it('reports a rejected API key with the way to fix it, and never the traceback', async () => {
@@ -136,6 +136,7 @@ describe('OdooClient', () => {
     assert.equal(error.odooName, 'werkzeug.exceptions.Unauthorized');
     assert.match(error.message, /^Odoo 401 Unauthorized: Invalid apikey/);
     assert.match(error.message, /ODOO_API_KEY/);
+    assert.match(error.message, /My Preferences → Security → Add API Key/);
     assert.ok(!error.message.includes(TRACEBACK_MARKER));
     assert.ok(!error.message.includes('Traceback'));
   });
