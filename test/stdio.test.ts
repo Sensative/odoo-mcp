@@ -10,7 +10,8 @@ import { getDefaultEnvironment, StdioClientTransport } from '@modelcontextprotoc
 import { FAKE_API_KEY, startFakeOdoo, type FakeOdoo } from './fake-odoo.ts';
 import { callToolText } from './harness.ts';
 
-const ENTRY = fileURLToPath(new URL('../src/main.ts', import.meta.url));
+// `npm run bundle` points this at the bundled server, to put the file that ships through the same checks.
+const ENTRY = process.env.ODOO_MCP_ENTRY ?? fileURLToPath(new URL('../src/main.ts', import.meta.url));
 
 function collect(stream: Stream | null): () => string {
   let text = '';

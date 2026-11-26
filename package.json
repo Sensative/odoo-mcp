@@ -13,7 +13,8 @@
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc",
     "check": "npm run typecheck && npm test",
-    "smoke": "node scripts/smoke.ts"
+    "smoke": "node scripts/smoke.ts",
+    "bundle": "node scripts/bundle.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "^2.4.0",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@modelcontextprotocol/client": "^2.4.0",
     "@types/node": "^22.20.7",
+    "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
   }
 }

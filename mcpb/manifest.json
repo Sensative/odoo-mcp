@@ -1,0 +1,57 @@
+{
+  "manifest_version": "0.3",
+  "name": "sensative-odoo",
+  "display_name": "Odoo (Sensative)",
+  "description": "Look things up in Sensative's Odoo, and change them when you allow it.",
+  "long_description": "Gives Claude access to Odoo through your own API key: everything it reads or changes is done as you, with your access rights, and shows up under your name in Odoo's logs.\n\nIt starts out read-only. Switch *Read-only* off in the extension's settings when you want Claude to be able to create, update or delete records.",
+  "author": {
+    "name": "Sensative"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sensative/odoo-mcp"
+  },
+  "documentation": "https://github.com/Sensative/odoo-mcp#readme",
+  "keywords": ["odoo", "erp"],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "ODOO_API_KEY": "${user_config.api_key}",
+        "ODOO_URL": "${user_config.odoo_url}",
+        "ODOO_READONLY": "${user_config.read_only}"
+      }
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "Odoo API key",
+      "description": "Your personal key. Create it in Odoo: your avatar (top right) → My Preferences → Security → Add API Key.",
+      "sensitive": true,
+      "required": true
+    },
+    "odoo_url": {
+      "type": "string",
+      "title": "Odoo address",
+      "description": "The address you open Odoo at in the browser.",
+      "default": "https://sensative.implefy.cloud",
+      "required": true
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "Read-only",
+      "description": "While on, Claude can look things up in Odoo but cannot create, change or delete anything.",
+      "default": true
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=20.3.0"
+    }
+  }
+}

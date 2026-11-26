@@ -7,6 +7,19 @@ Default target: **https://sensative.implefy.cloud** (Odoo 19.0 Enterprise).
 
 Every call runs as the user who owns the API key, with that user's access rights and record rules.
 
+## Which way to connect
+
+| You use | Install | You need |
+|---|---|---|
+| The Claude desktop app | [The desktop extension](#install-the-desktop-extension) | One downloaded file. No terminal, no Node.js. |
+| Claude Code, VS Code, Cursor or another developer tool | [A checkout of this repository](#run-it-from-a-checkout) | Node.js and git. |
+
+Claude in the browser and on the phone can only reach servers that are hosted at an address. This server
+is not hosted anywhere yet; [the last part of the OAuth section](#why-an-api-key-and-not-an-oauth-login)
+says what that would take.
+
+Either way you first need an API key.
+
 ## Create your API key
 
 The server signs in to Odoo with a personal API key. The key belongs to your user: calls run with your
@@ -30,9 +43,46 @@ Good to know:
 - **Withdrawing.** The same *API Keys* list has a trash button on every key. A deleted key stops working
   at once.
 
-## Install and connect
+## Install the desktop extension
 
-You need Node.js 22.18 or later. It runs the TypeScript sources directly, so there is no build step.
+For the Claude desktop app on macOS and Windows. Nothing else has to be installed: the extension runs on
+the Node.js that is built into the app.
+
+1. Get the file `sensative-odoo-<version>.mcpb` from whoever looks after this server in your organisation.
+2. In the Claude desktop app, open **Settings > Desktop app** and choose **Manage** next to *Extensions*
+   (in older versions: **Settings > Extensions**).
+3. Drag the file onto that page, or choose **Advanced settings > Install Extension…** and pick it.
+   Double-clicking the file works as well.
+4. Look through what the extension asks for, choose **Install** and fill in the settings:
+   - **Odoo API key**: your key from the section above. The app keeps it in the operating system's
+     secure storage (Keychain on macOS, Credential Manager on Windows).
+   - **Odoo address**: already filled in.
+   - **Read-only**: on to begin with, so Claude can look things up but not change them. Switch it off
+     when Claude should be able to create, update or delete records.
+5. Start a new chat and ask *Which Odoo are you connected to?* Claude answers with the Odoo version and
+   your user. If it reports a rejected key instead, paste a fresh key into the extension's settings.
+
+To update, install the newer file the same way. If *Extensions* is missing from the settings, your
+organisation has switched extensions off.
+
+### Building and handing out the extension
+
+```bash
+npm run bundle
+```
+
+writes `dist/sensative-odoo-<version>.mcpb`: the server and its dependencies as one JavaScript file, plus
+the manifest in `mcpb/manifest.json`. Before it finishes it runs the stdio end-to-end tests against that
+bundled file. The bundle is not code-signed.
+
+Hand the file out any way you like: a file share, a release on GitHub. On Team and Enterprise plans an
+Owner can also upload it for the whole organisation and control which extensions members may install;
+see [Getting started with local MCP servers on Claude Desktop](https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop).
+
+## Run it from a checkout
+
+For Claude Code and other tools that start MCP servers from a command. You need Node.js 22.18 or later.
+It runs the TypeScript sources directly, so there is no build step.
 
 1. Get the code and its dependencies:
 
@@ -181,6 +231,9 @@ src/config.ts          reads and checks the settings
 src/odoo-client.ts     JSON-2 calls, timeouts, error mapping
 src/format.ts          paging envelopes and the response cap
 src/tools/             one registration per tool
+mcpb/manifest.json     what the desktop extension tells Claude Desktop about itself
+scripts/bundle.ts      builds the desktop extension
+scripts/smoke.ts       the live check behind `npm run smoke`
 ```
 
 The server speaks the 2026-07-28 MCP revision and, through the same factory, the 2025 revisions that
