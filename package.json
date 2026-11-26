@@ -1,24 +1,27 @@
 {
   "name": "odoo-mcp",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "node test.ts",
-    "start": "node server.ts"
-  },
-  "keywords": [],
-  "author": "",
+  "version": "2.0.0",
+  "description": "MCP server for Odoo 19+ (JSON-2 API)",
+  "private": true,
   "license": "ISC",
   "type": "module",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.2",
-    "zod": "^4.6.7"
-  },
-  "bin": {
-    "odoo-mcp": "server.ts"
-  },
   "engines": {
     "node": ">=22.18"
+  },
+  "scripts": {
+    "start": "node src/main.ts",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc",
+    "check": "npm run typecheck && npm test",
+    "smoke": "node scripts/smoke.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@types/node": "^22.20.7",
+    "typescript": "^7.0.2"
   }
 }
